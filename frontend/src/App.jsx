@@ -9,10 +9,16 @@ import "./App.css";
 import { SideBar } from "./components/SideBar";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "./utils/api";
+import { isAuthed } from "./utils/auth";
+import DashboardNavbar from "./components/DashboardNavbar";
+import AddContentCard from "./components/AddContentCard";
+import ContentList from "./components/ContentList";
+import ShareCard from "./components/ShareCard";
 
 function App() {
   const [open, setOpen] = useState(false);
   const [openShare, setOpenShare] = useState(false);
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const queryClient = useQueryClient();
 
   const { data, isLoading, error } = useQuery({
@@ -27,53 +33,32 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-200 flex">
-      {/* Sidebar */}
-      <aside className="hidden md:flex flex-col w-52 bg-white border-r border-gray-100 shadow-sm py-8 px-3 min-h-screen items-center">
+      {/* Sidebar (kept for future sections; can be hidden entirely if not needed) */}
+      <aside className="hidden lg:flex flex-col w-64 bg-white border-r border-gray-100 shadow-sm py-6 px-4 min-h-screen">
         <SideBar />
       </aside>
+      {/* Mobile sidebar overlay */}
+      {mobileNavOpen && (
+        <div className="fixed inset-0 z-40 lg:hidden">
+          <div className="absolute inset-0 bg-black/40" onClick={() => setMobileNavOpen(false)} />
+          <div className="absolute top-0 left-0 h-full w-72 bg-white shadow-lg p-4 z-50">
+            <SideBar onClose={() => setMobileNavOpen(false)} />
+          </div>
+        </div>
+      )}
       {/* Main content with navbar */}
       <div className="flex-1 flex flex-col min-h-screen">
-        {/* Navbar */}
-        <nav className="w-full flex items-center justify-between px-4 sm:px-10 py-4 bg-white shadow border-b sticky top-0 z-30">
-          {/* Left: Brain icon and name */}
-          <div className="flex items-center gap-2">
-            <span className="text-3xl select-none" role="img" aria-label="brain">🧠</span>
-            <span className="text-2xl font-extrabold text-purple-700 tracking-tight select-none">secondbrain</span>
-          </div>
-          {/* Right: Buttons */}
-          <div className="flex gap-2">
-            <Button
-              variant="primary"
-              text="Add Content"
-              StartIcon={<PlusIcon />}
-              onClick={() => setOpen(true)}
-              size="md"
-            />
-            <Button
-              variant="secondary"
-              text="Share brain"
-              StartIcon={<ShareIcon />}
-              onClick={() => setOpenShare(true)}
-              size="md"
-            />
-          </div>
-        </nav>
+        <DashboardNavbar />
         {/* Main content area */}
-        <main className="flex-1 flex flex-col items-center justify-start w-full px-2 sm:px-8 py-10">
-          {isLoading && <div className="text-gray-600">Loading your content...</div>}
-          {error && <div className="text-red-600">{error.message}</div>}
-          <div className="w-full max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-8">
-            {data?.content?.map((item) => (
-              <div key={item._id} className="relative group">
-                <Card title={item.title} url={item.link} />
-                <button
-                  className="absolute -top-2 -right-2 opacity-0 group-hover:opacity-100 transition bg-red-500 text-white text-xs px-2 py-1 rounded"
-                  onClick={() => deleteItem(item._id)}
-                >
-                  Delete
-                </button>
-              </div>
-            ))}
+        <main className="flex-1 w-full px-3 sm:px-6 lg:px-8 py-6 lg:py-10">
+          <div className="w-full max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
+            <div className="lg:col-span-2 space-y-6">
+              <AddContentCard />
+              <ContentList />
+            </div>
+            <div className="lg:col-span-1">
+              <ShareCard />
+            </div>
           </div>
         </main>
         {/* Show modal */}
