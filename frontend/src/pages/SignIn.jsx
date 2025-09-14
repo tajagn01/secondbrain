@@ -1,6 +1,9 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { setAuth } from "../utils/auth";
+import Card from "../ui/Card";
+import Input from "../ui/Input";
+import Button from "../ui/Button";
 
 export default function SignIn() {
   const [form, setForm] = useState({ username: "", password: "" });
@@ -28,35 +31,20 @@ export default function SignIn() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-purple-400 to-purple-700">
-      <form onSubmit={handleSubmit} className="bg-white p-8 rounded-xl shadow-lg w-full max-w-md">
-        <h2 className="text-2xl font-bold mb-6 text-center text-purple-700">Sign In</h2>
-        {error && <div className="mb-4 text-red-600">{error}</div>}
-        <input
-          className="w-full mb-4 p-3 border rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
-          type="text"
-          name="username"
-          placeholder="Username"
-          value={form.username}
-          onChange={handleChange}
-          required
-        />
-        <input
-          className="w-full mb-4 p-3 border rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
-          type="password"
-          name="password"
-          placeholder="Password"
-          value={form.password}
-          onChange={handleChange}
-          required
-        />
-        <button className="w-full bg-purple-600 text-white py-3 rounded font-semibold hover:bg-purple-700 transition" type="submit">
-          Sign In
-        </button>
-        <p className="mt-4 text-center">
-          Don't have an account? <Link to="/signup" className="text-purple-700 underline">Sign Up</Link>
-        </p>
-      </form>
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-gray-50 to-gray-200 px-3">
+      <div className="w-full max-w-md">
+        <Card title="Welcome back" subtitle="Sign in to continue">
+          {error && <div className="mb-3 text-red-600 text-sm">{error}</div>}
+          <form onSubmit={handleSubmit} className="space-y-3">
+            <Input type="text" name="username" placeholder="Username" value={form.username} onChange={handleChange} required />
+            <Input type="password" name="password" placeholder="Password" value={form.password} onChange={handleChange} required />
+            <Button className="w-full" type="submit">Sign In</Button>
+          </form>
+          <p className="mt-4 text-center text-sm text-gray-600">
+            Don't have an account? <Link to="/signup" className="text-purple-700 underline">Sign Up</Link>
+          </p>
+        </Card>
+      </div>
     </div>
   );
 }

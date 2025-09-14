@@ -1,6 +1,8 @@
 import { useMemo, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "../utils/api";
+import { deriveTypeFromLink } from "../utils/content";
+import { dateFromObjectIdHex } from "../utils/date";
 
 function Tag({ children }) {
   return <span className="inline-block text-xs px-2 py-0.5 bg-purple-50 text-purple-700 rounded">{children}</span>
@@ -20,8 +22,9 @@ export default function ContentList() {
   const filtered = useMemo(() => {
     const items = data?.content || [];
     return items.filter((it) => {
+      const computedType = deriveTypeFromLink(it.link);
       const matchesSearch = !search || (it.title?.toLowerCase().includes(search.toLowerCase()) || it.link?.toLowerCase().includes(search.toLowerCase()));
-      const matchesType = !type || (type === (it.type || ""));
+      const matchesType = !type || (type === computedType);
       return matchesSearch && matchesType;
     });
   }, [data, search, type]);
@@ -46,13 +49,16 @@ export default function ContentList() {
       {error && <div className="text-red-600">{error.message}</div>}
       {!isLoading && !error && (
         <div className="divide-y">
-          {filtered.map((item) => (
+          {filtered.map((item) => {
+            const computedType = deriveTypeFromLink(item.link);
+            const created = item.createdAt ? new Date(item.createdAt) : dateFromObjectIdHex(item._id);
+            return (
             <div key={item._id} className="py-3 flex items-start gap-3">
-              <div className="pt-0.5"><Tag>{item.type || 'link'}</Tag></div>
+              <div className="pt-0.5"><Tag>{computedType}</Tag></div>
               <div className="flex-1 min-w-0">
                 <div className="font-medium text-gray-800 truncate">{item.title}</div>
                 <a href={item.link} target="_blank" rel="noreferrer" className="text-xs text-blue-600 break-all">{item.link}</a>
-                {item.createdAt && <div className="text-[11px] text-gray-500 mt-0.5">{new Date(item.createdAt).toLocaleString()}</div>}
+                <div className="text-[11px] text-gray-500 mt-0.5">{created ? created.toLocaleString() : ''}</div>
               </div>
               <div className="flex items-center gap-2">
                 <a className="text-sm px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded" href={item.link} target="_blank" rel="noreferrer">Open</a>
@@ -61,7 +67,7 @@ export default function ContentList() {
                 </button>
               </div>
             </div>
-          ))}
+          );})}
           {filtered.length === 0 && (
             <div className="text-sm text-gray-500 py-6 text-center">No items match your search.</div>
           )}

@@ -1,7 +1,7 @@
 import { useParams, Link } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { api } from '../utils/api'
-import { Card } from '../components/card'
+import UICard from '../ui/Card'
 
 export default function SharedBrain() {
   const { shareLink } = useParams()
@@ -25,9 +25,11 @@ export default function SharedBrain() {
         {isLoading && <div className="text-gray-600">Loading shared content...</div>}
         {error && <div className="text-red-600">{error.message}</div>}
         {data?.content?.length === 0 && <div className="text-gray-600">No content yet.</div>}
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
           {data?.content?.map((item) => (
-            <Card key={item._id} title={item.title} url={item.link} />
+            <UICard key={item._id} title={item.title}>
+              <a className="text-blue-600 break-all" href={item.link} target="_blank" rel="noreferrer">{item.link}</a>
+            </UICard>
           ))}
         </div>
       </main>
