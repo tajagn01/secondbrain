@@ -14,12 +14,21 @@ const userSchema = new Schema({
 const Usermodel = model("User", userSchema);
 
 const contentSchema = new Schema({
-    title : String,
-    link: String,
-    tags : [{ type : mongoose.Types.ObjectId, ref : 'Tag'}],
-    userId: { type: mongoose.Types.ObjectId, ref: 'User', required: true },
+  title : String,
+  link: String,
+  tags : [{ type : mongoose.Types.ObjectId, ref : 'Tag'}],
+  userId: { type: mongoose.Types.ObjectId, ref: 'User', required: true },
 });
 
 const contentmodel = model("content", contentSchema);
 
-module.exports = { Usermodel, contentmodel };
+// Link model for sharebrain links
+const linkSchema = new Schema({
+  userId: { type: mongoose.Types.ObjectId, ref: 'User', required: true },
+  shareLink: { type: String, required: true, unique: true },
+  createdAt: { type: Date, default: Date.now }
+});
+
+const Linkmodel = model("Link", linkSchema);
+
+module.exports = { Usermodel, contentmodel, Linkmodel };
