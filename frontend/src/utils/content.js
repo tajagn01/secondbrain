@@ -1,21 +1,29 @@
 export function deriveTypeFromLink(link) {
-\tif (!link) return 'link';
-\ttry {
-\t\tconst url = new URL(link);
-\t\tconst host = url.host;
-\t\tif (host.includes('youtube.com') || host.includes('youtu.be')) return 'youtube';
-\t\tif (host.includes('twitter.com') || host.includes('x.com')) return 'twitter';
-\t\treturn 'link';
-\t} catch {
-\t\treturn 'link';
-\t}
+  if (!link) return 'link';
+
+  try {
+    const url = new URL(link);
+    const hostname = url.hostname.toLowerCase();
+
+    if (hostname.includes('youtube.com') || hostname.includes('youtu.be')) {
+      return 'youtube';
+    }
+    if (hostname.includes('twitter.com') || hostname.includes('x.com')) {
+      return 'twitter';
+    }
+
+    return 'link';
+  } catch {
+    return 'link';
+  }
 }
 
 export function getHostname(link) {
-\ttry {
-\t\treturn new URL(link).hostname.replace(/^www\./, '');
-\t} catch {
-\t\treturn '';
-\t}
+  try {
+    return new URL(link).hostname.replace(/^www\./i, '');
+  } catch {
+    return '';
+  }
 }
+
 
