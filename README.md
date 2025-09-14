@@ -164,6 +164,5 @@ npm run build     # production build
 npm run preview   # preview the production build
 ```
 
-## License
 
-MIT (c) Your Name
+
