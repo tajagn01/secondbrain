@@ -21,7 +21,11 @@ export default function EmbedCard({ title, url }) {
 					/>
 				)}
 				{parsed.type === 'twitter' && (
-					<Tweet id={(url.match(/status\/(\d+)/) || [])[1]} />
+					<div className="w-full max-w-full overflow-hidden">
+						<div className="tweet-embed">
+							<Tweet id={(url.match(/status\/(\d+)/) || [])[1]} />
+						</div>
+					</div>
 				)}
 				{parsed.type === 'unknown' && (
 					<a href={parsed.link} target="_blank" rel="noreferrer" className="text-blue-600 break-all text-sm">{parsed.link}</a>
