@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { setAuth } from "../utils/auth";
 
 export default function SignIn() {
   const [form, setForm] = useState({ username: "", password: "" });
@@ -19,7 +20,7 @@ export default function SignIn() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message);
-      localStorage.setItem("token", data.token);
+      setAuth(data.token, form.username);
       navigate("/");
     } catch (err) {
       setError(err.message);
