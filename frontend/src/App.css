@@ -1,1 +1,8 @@
 @import "tailwindcss";
+
+/* Ensure embedded tweets don't overflow card width */
+.tweet-embed iframe,
+.tweet-embed div {
+	max-width: 100% !important;
+	width: 100% !important;
+}
