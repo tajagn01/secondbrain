@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "../utils/api";
 import { deriveTypeFromLink } from "../utils/content";
 import { dateFromObjectIdHex } from "../utils/date";
+import EmbedCard from "./EmbedCard";
 
 function Tag({ children }) {
   return <span className="inline-block text-xs px-2 py-0.5 bg-purple-50 text-purple-700 rounded">{children}</span>
@@ -48,26 +49,20 @@ export default function ContentList() {
       {isLoading && <div className="text-gray-600">Loading...</div>}
       {error && <div className="text-red-600">{error.message}</div>}
       {!isLoading && !error && (
-        <div className="divide-y">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
           {filtered.map((item) => {
-            const computedType = deriveTypeFromLink(item.link);
             const created = item.createdAt ? new Date(item.createdAt) : dateFromObjectIdHex(item._id);
             return (
-            <div key={item._id} className="py-3 flex items-start gap-3">
-              <div className="pt-0.5"><Tag>{computedType}</Tag></div>
-              <div className="flex-1 min-w-0">
-                <div className="font-medium text-gray-800 truncate">{item.title}</div>
-                <a href={item.link} target="_blank" rel="noreferrer" className="text-xs text-blue-600 break-all">{item.link}</a>
-                <div className="text-[11px] text-gray-500 mt-0.5">{created ? created.toLocaleString() : ''}</div>
+              <div key={item._id} className="relative group">
+                <EmbedCard title={item.title} url={item.link} />
+                <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition flex gap-2">
+                  <a className="text-xs px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded" href={item.link} target="_blank" rel="noreferrer">Open</a>
+                  <button className="text-xs px-2 py-1 bg-red-50 text-red-600 hover:bg-red-100 rounded" onClick={() => deleteItem(item._id)}>Delete</button>
+                </div>
+                <div className="px-4 pb-3 text-[11px] text-gray-500">{created ? created.toLocaleString() : ''}</div>
               </div>
-              <div className="flex items-center gap-2">
-                <a className="text-sm px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded" href={item.link} target="_blank" rel="noreferrer">Open</a>
-                <button className="text-sm px-2 py-1 bg-red-50 text-red-600 hover:bg-red-100 rounded" onClick={() => deleteItem(item._id)}>
-                  Delete
-                </button>
-              </div>
-            </div>
-          );})}
+            );
+          })}
           {filtered.length === 0 && (
             <div className="text-sm text-gray-500 py-6 text-center">No items match your search.</div>
           )}
